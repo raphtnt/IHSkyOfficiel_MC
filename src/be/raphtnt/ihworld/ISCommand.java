@@ -64,9 +64,14 @@ public class ISCommand implements CommandExecutor {
                     Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
                         try {
                             plugin.generateWorld(slimeWorld);
+                            sqlLoader.unlockWorld("sky03");
                         } catch (IllegalArgumentException ex) {
                             System.out.println("--> " + ex);
                             return;
+                        } catch (UnknownWorldException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
                         System.out.println("YESSS MAN");
                     });
@@ -151,29 +156,15 @@ public class ISCommand implements CommandExecutor {
                 e.printStackTrace();
             }
             return true;
+        }else if(args[0].equalsIgnoreCase("debug")) {
+            Main.getInstance().storageIsland.forEach(island -> {
+                World world = Bukkit.getWorld(island.getName());
+                System.out.println(world);
+                System.out.println("----------");
+                System.out.println(world.getName());
+            });
+            return true;
         }else {
-
-
-            ItemStack item = new ItemStack(Material.RECORD_12, 1);
-            item.setDurability((short) 0.5);
-            ItemMeta meta = item.getItemMeta();
-            meta.spigot().setUnbreakable(true);
-            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
-            meta.setDisplayName("0.5");
-            item.setItemMeta(meta);
-
-            ItemStack item1 = new ItemStack(Material.RECORD_12, 1);
-            item1.setDurability((short) 5);
-            ItemMeta meta1 = item1.getItemMeta();
-            meta1.spigot().setUnbreakable(true);
-            meta1.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
-            meta1.setDisplayName("5");
-            item1.setItemMeta(meta1);
-
-            player.getInventory().addItem(item);
-            player.getInventory().addItem(item1);
-
-            player.updateInventory();
 
             player.sendMessage("Please write : /is <normal/nether/creepy/list)");
             return true;

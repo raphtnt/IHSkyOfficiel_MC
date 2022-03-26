@@ -29,6 +29,9 @@ public class Island {
     SlimePlugin plugin = (SlimePlugin) Bukkit.getPluginManager().getPlugin("SlimeWorldManager");
     SlimeLoader sqlLoader = plugin.getLoader("mysql");
 
+    public Island(World worldName) {
+        this.name = worldName.getName();
+    }
 
     public Island(String name) {
         this.name = name;
@@ -49,7 +52,7 @@ public class Island {
         SlimePropertyMap slimePropertyMap = new SlimePropertyMap();
         slimePropertyMap.setBoolean(SlimeProperties.ALLOW_ANIMALS, true);
         slimePropertyMap.setBoolean(SlimeProperties.ALLOW_MONSTERS, true);
-        slimePropertyMap.setString(SlimeProperties.DIFFICULTY, Difficulty.EASY.toString());
+        slimePropertyMap.setString(SlimeProperties.DIFFICULTY, Difficulty.NORMAL.toString());
         slimePropertyMap.setBoolean(SlimeProperties.PVP, true);
         slimePropertyMap.setInt(SlimeProperties.SPAWN_X, 0);
         slimePropertyMap.setInt(SlimeProperties.SPAWN_Y, 63);
@@ -124,6 +127,18 @@ public class Island {
                 e.printStackTrace();
             }
         });
+    }
+
+    public boolean unloadWorld(World world) {
+        System.out.println("Avant : " + Main.getInstance().storageIsland.size());
+        if(Bukkit.unloadWorld(world, true)) {
+//            world.save();
+            Main.getInstance().storageIsland.remove(this);
+            rankList.remove(new IslandPermission("owner", true));
+            System.out.println(Main.getInstance().storageIsland.size());
+            return true;
+        }
+        return false;
     }
 
 

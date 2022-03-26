@@ -7,7 +7,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="spigot" level="project" />
-    <orderEntry type="library" name="slimeworldmanager-api-2.2.1" level="project" />
+    <orderEntry type="library" name="asm-9.2" level="project" />
+    <orderEntry type="library" name="slimeworldmanager-api" level="project" />
   </component>
 </module>

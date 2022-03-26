@@ -50,6 +50,7 @@ public class BlockPlaceEvents implements Listener {
         Location location2 = new Location(world,x + level,y + 155,z + level);
         Cuboid cuboid = new Cuboid(location1, location2);
 
+        if(getIsland(world.getName()) == null) return false;
         if(getIsland(world.getName()).getRank(player) != null && getIsland(world.getName()).getRank(player).isPlaceBlock()) {
             return cuboid.isIn(location);
         }

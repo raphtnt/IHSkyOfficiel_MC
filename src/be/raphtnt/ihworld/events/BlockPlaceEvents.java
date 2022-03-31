@@ -1,8 +1,6 @@
-package be.raphtnt.ihworld;
+package be.raphtnt.ihworld.events;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
+import be.raphtnt.ihworld.Island;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -10,11 +8,10 @@ import org.bukkit.event.block.BlockPlaceEvent;
 
 public class BlockPlaceEvents implements Listener {
 
+
     @EventHandler
     public void placeEvent(BlockPlaceEvent event) {
         Player player = event.getPlayer();
-        World playerGETWorld = player.getWorld();
-        World getWorldR = Bukkit.getWorld("raphtnt_creepy");
 
         /*
         Si il est dans la liste on passe a la prochaine condition sinon MESSAGE ERROR
@@ -23,10 +20,9 @@ public class BlockPlaceEvents implements Listener {
          */
 //        System.out.println(BlockPlaceEvents.getIsland(playerGETWorld.getName()).getPlayerList().get(player));
 
-        if(test(player, event.getBlock().getLocation())) {
-            player.sendMessage("YESSS MAN !");
-        }else {
-            player.sendMessage("Your are not authorize !");
+        if(!(Island.inLocation(player, event.getBlock().getLocation(), "isPlaceBlock"))) {
+            event.setCancelled(true);
+            player.sendMessage("IHSky >> Vous n'avez pas la permission de placer des blocks !");
         }
 
 
@@ -38,7 +34,7 @@ public class BlockPlaceEvents implements Listener {
 
     }
 
-    public boolean test(Player player, Location location) {
+/*    public boolean test(Player player, Location location) {
 //        World world = Bukkit.getWorld("raphtnt_creepy");
 
         World world = player.getWorld();
@@ -66,6 +62,6 @@ public class BlockPlaceEvents implements Listener {
             }
         }
         return null;
-    }
+    }*/
 
 }

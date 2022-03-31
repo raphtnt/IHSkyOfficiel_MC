@@ -1,5 +1,12 @@
 package be.raphtnt.ihworld;
 
+import be.raphtnt.ihworld.database.DatabaseAccess;
+import be.raphtnt.ihworld.database.DatabaseCredentials;
+import be.raphtnt.ihworld.events.BlockBreakEvents;
+import be.raphtnt.ihworld.events.BlockPlaceEvents;
+import be.raphtnt.ihworld.events.InteractEvents;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -12,27 +19,42 @@ import java.util.HashMap;
 public class Main extends JavaPlugin {
 
     public static Main instance;
-    ArrayList<Island> storageIsland = new ArrayList<>();
+    public ArrayList<Island> storageIsland = new ArrayList<>();
     HashMap<Player, Players> storagePlayer = new HashMap<Player, Players>();
 
-    int i = 0;
+    public final GsonBuilder builder = new GsonBuilder();
+    public final Gson gson = builder.create();
+
 
     // Objet ile avec une liste de tout les joueurs si il est dedans ok sinon non
 
-    public static Main getInstance() {
-        return instance;
-    }
+    public DatabaseAccess databaseAccess;
+    public DatabaseCredentials databaseCredentials = new DatabaseCredentials(getConfig().getString("host"), getConfig().getString("user"), getConfig().getString("password"), getConfig().getString("dbname"), getConfig().getInt("port"));
 
     @Override
     public void onEnable() {
         super.onEnable();
         instance = this;
+
+        loadConfig();
+
+        if(getConfig().getBoolean("database")) {
+            System.out.println("[IHDev] - Chargement de la base de donnee");
+            databaseAccess = new DatabaseAccess(databaseCredentials);
+            databaseAccess.initPool();
+            System.out.println("[IHDev] - Chargement de la base de donnee fini");
+        }else {
+            System.out.println("[IHDev] - Base de donnee non active | Config = database: false");
+        }
+
         // UNLOAD ALL MAP
 
 //        new Island("world");
 
-        this.getServer().getPluginManager().registerEvents(new BlockPlaceEvents(), this);
         this.getServer().getPluginManager().registerEvents(new JoinEvent(), this);
+        this.getServer().getPluginManager().registerEvents(new BlockPlaceEvents(), this);
+        this.getServer().getPluginManager().registerEvents(new BlockBreakEvents(), this);
+        this.getServer().getPluginManager().registerEvents(new InteractEvents(), this);
 
         getCommand("test").setExecutor(new Test());
         getCommand("is").setExecutor(new ISCommand());
@@ -67,34 +89,44 @@ public class Main extends JavaPlugin {
         BukkitRunnable runnable = (new BukkitRunnable() {
             @Override
             public void run() {
-                if (storageIsland.size() != 0) {
+                if (!(storageIsland.isEmpty())) {
                     System.out.println(storageIsland.size());
-                    storageIsland.forEach(island -> {
+                    ArrayList<Island> t = (ArrayList<Island>) storageIsland.clone();
+                    for (Island island : t) {
                         World world = Bukkit.getWorld(island.getName());
-                        System.out.println(island.getName());
                         if (world.getPlayers().isEmpty()) {
                             System.out.println("Unload World " + world.getName());
-                            Island island1 = new Island(world);
-                            if(!island1.unloadWorld(world)) {
+                            if (!island.unloadWorld(world)) {
                                 System.out.println("Erreur durant le unload du World : " + world.getName());
                             }
-//                            Bukkit.unloadWorld(world, true);
                         } else {
                             System.out.println("Save World " + world.getName());
                             world.save();
                         }
-                    });
+                    }
                 }
             }
         });
 
-        runnable.runTaskTimer(this, 200L, 200L);
+        runnable.runTaskTimer(this, 6000L, 6000L);
 
     }
 
     @Override
     public void onDisable() {
         super.onDisable();
+        if(getConfig().getBoolean("database")) {
+            databaseAccess.closePool();
+        }
+    }
+
+    public void loadConfig(){
+        getConfig().options().copyDefaults(true);
+        saveConfig();
+    }
+
+    public static Main getInstance() {
+        return instance;
     }
 
 }

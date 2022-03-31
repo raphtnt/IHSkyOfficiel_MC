@@ -1,14 +1,15 @@
 package be.raphtnt.ihworld;
 
+import java.util.ArrayList;
+
 public class IslandPermission {
 
-
     private String rankName;
-    private boolean placeBlock;
+    private ArrayList<String> perms;
 
-    public IslandPermission(String rankName, boolean placeBlock) {
+    public IslandPermission(String rankName, ArrayList<String> perms) {
         this.rankName = rankName;
-        this.placeBlock = placeBlock;
+        this.perms = perms;
     }
 
     public String getRankName() {
@@ -19,11 +20,41 @@ public class IslandPermission {
         this.rankName = rankName;
     }
 
+    public ArrayList<String> getPerms() {
+        return perms;
+    }
+
+    public void setPerms(ArrayList<String> perms) {
+        this.perms = perms;
+    }
+
+
+/*    private boolean placeBlock;
+
+    private boolean breakBlock;
+    private boolean interact;
+
+    public IslandPermission(String rankName, boolean placeBlock, boolean breakBlock, boolean interact) {
+        this.rankName = rankName;
+        this.placeBlock = placeBlock;
+        this.breakBlock = breakBlock;
+        this.interact = interact;
+    }
+
+    public String getRankName() {
+        return rankName;
+    }
+
     public boolean isPlaceBlock() {
         return placeBlock;
     }
 
-    public void setPlaceBlock(boolean placeBlock) {
-        this.placeBlock = placeBlock;
+    public boolean isBreakBlock() {
+        return breakBlock;
     }
+
+    public boolean isInteract() {
+        return interact;
+    }*/
+
 }

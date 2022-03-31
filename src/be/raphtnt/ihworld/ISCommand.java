@@ -1,5 +1,8 @@
 package be.raphtnt.ihworld;
 
+import be.raphtnt.ihworld.database.SQLRequete;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.grinderwolf.swm.api.SlimePlugin;
 import com.grinderwolf.swm.api.exceptions.*;
 import com.grinderwolf.swm.api.loaders.SlimeLoader;
@@ -11,16 +14,20 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.Recipe;
 
 import java.io.IOException;
+import java.sql.Array;
+import java.util.Iterator;
+import java.util.List;
 
 public class ISCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         Player player = (Player) sender;
+        SQLRequete sqlRequete = new SQLRequete();
 
         SlimePlugin plugin = (SlimePlugin) Bukkit.getPluginManager().getPlugin("SlimeWorldManager");
         SlimeLoader sqlLoader = plugin.getLoader("mysql");
@@ -131,21 +138,24 @@ public class ISCommand implements CommandExecutor {
 
             return true;
 
-        }else if(args[0].equalsIgnoreCase("cr")) {
-/*            ArrayList<String> storageISPlayer = new ArrayList<String>();
-            storageISPlayer.add(args[1]);       */
-//            ArrayList storageISPlayer = Main.getInstance().storagePlayer.get(player).getListIsland();
-//            storageISPlayer.add(args[1]);
-            player.sendMessage("Add in the list");
-//            ArrayList one = Main.getInstance().storagePlayer.get(player).getListIsland();
-//            one.add(args[1]);
+        }else if(args[0].equalsIgnoreCase("invite")) {
 
-//            Main.getInstance().storageIsland.get(0).addPlayer(player, "owner");
+
             World world = player.getWorld();
-            BlockPlaceEvents.getIsland(world.getName()).addPlayer(player, "owner");
-
+            if (Island.getIsland(world.getName()).getPlayerList().get(args[1]).equals(args[1])) {
+                player.sendMessage("Ce joueurs est déjà sur votre ile !");
+                return true;
+            } else {
+                Island.getIsland(world.getName()).addPlayer(args[1], "default");
+                player.sendMessage("Ce joueur est désormait sur votre île !");
+                return true;
+            }
 
 //            Main.getInstance().storagePlayer.get(player).setListIsland(storageISPlayer);
+        }else if(args[0].equalsIgnoreCase("promote")) {
+            World world = player.getWorld();
+            Island.getIsland(world.getName()).addPlayer(args[1], args[2]);
+            player.sendMessage("Tu viens de promote " + args[1] + " au rang de " + args[2]);
             return true;
         }else if(args[0].equalsIgnoreCase("unlock")) {
             try {
@@ -163,6 +173,50 @@ public class ISCommand implements CommandExecutor {
                 System.out.println("----------");
                 System.out.println(world.getName());
             });
+            return true;
+        }else if(args[0].equalsIgnoreCase("inventory")) {
+
+            ItemStack result = null;
+            Iterator<Recipe> iter = Bukkit.recipeIterator();
+
+            while (iter.hasNext()) {
+                Recipe recipe = iter.next();
+                if (!(recipe instanceof FurnaceRecipe)) continue;
+                for (ItemStack item : player.getInventory().getContents()) {
+                    if (item != null) {
+                        if (((FurnaceRecipe) recipe).getInput().getType() != item.getType()) continue;
+                        result = recipe.getResult();
+                        result.setAmount(item.getAmount());
+                        player.getInventory().removeItem(item);
+                        player.getInventory().addItem(result);
+                    }
+                }
+            }
+
+
+
+/*            for (ItemStack item : player.getInventory().getContents()) {
+//                System.out.println(item.getData());
+                for (Iterator<Recipe> it = Bukkit.recipeIterator(); it.hasNext(); ) {
+                    FurnaceRecipe recipe = (FurnaceRecipe) it.next();
+                    if (recipe.getInputChoice().test(item)) {
+                        player.getInventory().addItem(recipe.getResult());
+                    }
+                }
+            }*/
+
+            return true;
+        }else if(args[0].equalsIgnoreCase("players")) {
+            if(args[1].equalsIgnoreCase("get")) {
+                String islandsName = args[2];
+                player.sendMessage(sqlRequete.getIslandsPlayer(islandsName));
+
+            }else if(args[1].equalsIgnoreCase("update")) {
+                player.sendMessage("Update OK !");
+            }else if(args[1].equalsIgnoreCase("world")){
+                World world = Bukkit.getWorld(args[2]);
+                Island.getIsland(world.getName()).unloadWorld(world);
+            }
             return true;
         }else {
 

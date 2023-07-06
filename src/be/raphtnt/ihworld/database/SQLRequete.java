@@ -61,4 +61,27 @@ public class SQLRequete {
     }
 
 
+    public String getIslandsOneGroup(String nameIslands, String nameGroup) {
+        try {
+            final Connection connection = main.databaseAccess.getConnection();
+            final PreparedStatement q = connection.prepareStatement("SELECT * FROM `group_island` WHERE nameisland=? AND namegroup=?");
+            q.setString(1, nameIslands);
+            q.setString(2, nameGroup);
+            q.executeQuery();
+            final ResultSet rs = q.getResultSet();
+
+            if(rs.next()) {
+                return rs.getString("permissions");
+            }
+
+            connection.close();
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+
+
 }

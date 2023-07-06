@@ -1,6 +1,5 @@
 package be.raphtnt.ihworld.events;
 
-import be.raphtnt.ihworld.DenyInteractEvents;
 import be.raphtnt.ihworld.Island;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

@@ -218,8 +218,17 @@ public class ISCommand implements CommandExecutor {
                 Island.getIsland(world.getName()).unloadWorld(world);
             }
             return true;
-        }else {
+        }else if(args[0].equalsIgnoreCase("group")) {
+            MenuGroup menuGroup = new MenuGroup();
+            menuGroup.openInventory(player);
 
+            SQLRequete sqlRequetes = new SQLRequete();
+            Main.getInstance().gson.fromJson(sqlRequetes.getIslandsOneGroup("fox", "Owner"), List.class).forEach(t -> {
+                System.out.println(t.toString());
+            });
+
+            return true;
+        }else {
             player.sendMessage("Please write : /is <normal/nether/creepy/list)");
             return true;
         }

@@ -1,4 +1,4 @@
-package be.raphtnt.ihworld;
+package be.raphtnt.ihworld;isPlaceBlock
 
 import com.grinderwolf.swm.api.SlimePlugin;
 import com.grinderwolf.swm.api.loaders.SlimeLoader;

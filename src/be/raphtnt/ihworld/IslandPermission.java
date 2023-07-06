@@ -6,7 +6,19 @@ public class IslandPermission {
 
     private String rankName;
     private ArrayList<String> perms;
+e;
+    private ArrayList<String> perms;
 
+    public IslandPermission(String rankName, ArrayList<String> perms) {
+        this.rankName = rankName;
+        this.perms = perms;
+    }
+
+    public String getRankName() {
+        return this.rankName;
+    }
+
+    public void setRankName(String rank
     public IslandPermission(String rankName, ArrayList<String> perms) {
         this.rankName = rankName;
         this.perms = perms;

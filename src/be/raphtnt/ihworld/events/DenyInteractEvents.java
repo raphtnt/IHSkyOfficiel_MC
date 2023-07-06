@@ -1,4 +1,4 @@
-package be.raphtnt.ihworld;
+package be.raphtnt.ihworld.events;
 
 import org.bukkit.Material;
 

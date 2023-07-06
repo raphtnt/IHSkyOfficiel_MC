@@ -1,0 +1,8 @@
+name: IHSky
+version: 0.1
+author: raphtnt
+main: be.raphtnt.ihworld.Main
+api-version: 1.18
+commands:
+  test:
+  is:
